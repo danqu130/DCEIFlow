@@ -24,17 +24,15 @@ class ArgParser:
         self.parse.add_argument("--checkpoint", type=str, default="", help="")
         self.parse.add_argument('--weight_fix', type=str, default="", \
             help='fix some weights for transfer training')
-        self.parse.add_argument('--partial_checkpoint', type=str, default="", \
-            help='checkpoint path for load partial parameters')
 
         self.parse.add_argument("--model", type=str, default="DCEIFlow", help="")
         self.parse.add_argument('--iters', type=int, default=6, help="iters from low level to higher")
         self.parse.add_argument("--backbone", type=str, default="BasicEncoder", help="")
         self.parse.add_argument("--corr", type=str, default="Corr", help="")
         self.parse.add_argument("--decoder", type=str, default="Updater", help="")
-        self.parse.add_argument("--fusion", type=str, default="ConvDualRes", help="ConvDualRes, add")
         self.parse.add_argument('--small', action='store_true', default=False, help='use small model')
         self.parse.add_argument('--warm_start', action='store_true', default=False, help='use warm start in evaluate stage')
+
         self.parse.add_argument('--event_bins', type=int, default=5, \
             help='number of bins in the voxel grid event tensor')
         self.parse.add_argument('--no_event_polarity', dest='no_event_polarity', action='store_true', \
@@ -54,8 +52,6 @@ class ArgParser:
         self.parse.add_argument('--not_save_board', action='store_true', default=False)
         self.parse.add_argument('--not_save_log', action='store_true', default=False)
         self.parse.add_argument("--log_path", type=str, default="logs", help="")
-        self.parse.add_argument("--submit_path", type=str, default="results", help="")
-        self.parse.add_argument("--submit_folder", type=str, default="None", help="")
 
         self.parse.add_argument('--run_epoch', action='store_true', default=True)
         self.parse.add_argument("--epoch", type=int, default=200, help="")
@@ -66,16 +62,12 @@ class ArgParser:
         self.parse.add_argument("--save_path", type=str, default="logs", help="")
         self.parse.add_argument("--debug", action='store_true', default=False)
 
-        self.parse.add_argument("--split_train_ratio", type=float, default=0.8, help="")
-        self.parse.add_argument("--aug_ratio", type=float, default=0.5, help="")
         self.parse.add_argument("--crop_size", type=int, nargs='+', default=[368, 496])
         self.parse.add_argument("--pad", type=int, default=8, help="")
 
         self.parse.add_argument('--skip_num', type=int, default=1, help='skip images in dataset to get more events')
-        self.parse.add_argument('--skip_clip', type=float, default=1.0, help='the percent of events only used in the last skip')
         self.parse.add_argument('--skip_mode', type=str, default='i', \
-            help='skip images mode in dataset to get more events i(interrupt)/c(continue)/e(event count)')
-        self.parse.add_argument('--skip_events', type=int, default=30000, help='skip events count')
+            help='skip images mode in dataset to get more events i(interrupt)/c(continue)')
 
     def _print(self):
         print(">>> ======= Options ==========")
