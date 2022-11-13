@@ -27,7 +27,7 @@ Please put them into the `checkpoint` folder.
 
 ## Evaluation
 
-To evaluate our model, you need first download the HDF5 files version of [MVSEC](https://lmb.informatik.uni-freiburg.de/resources/datasets/FlyingChairs.en.html#flyingchairs2) datasets.
+To evaluate our model, you need first download the HDF5 files version of [MVSEC](https://daniilidis-group.github.io/mvsec/download/) datasets.
 
 ```
 data/MVSEC_HDF5
