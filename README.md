@@ -103,4 +103,7 @@ Thanks for the following helpful open source projects:
 [RAFT](https://github.com/princeton-vl/RAFT), 
 [event_utils](https://github.com/TimoStoff/event_utils), 
 [EV-FlowNet](https://github.com/daniilidis-group/EV-FlowNet), 
-[mvsec_eval](https://github.com/TimoStoff/mvsec_eval).
+[mvsec_eval](https://github.com/TimoStoff/mvsec_eval),
+[esim_py](https://github.com/uzh-rpg/rpg_vid2e),
+[DVS-Voltmeter](https://github.com/Lynn0306/DVS-Voltmeter),
+[Spike-FlowNet](https://github.com/chan8972/Spike-FlowNet).
