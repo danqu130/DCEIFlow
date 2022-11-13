@@ -13,7 +13,7 @@ Zhexiong Wan, Yuchao Dai, Yuxin Mao
 
 <img src="asserts/viz.png" width="60%" />
 
-If you have any questions, please do not hesitate to raise the issue or contact my email wanzhexiong@nwpu.edu.cn
+If you have any questions, please do not hesitate to raise the issue or contact my email wanzhexiong@mail.nwpu.edu.cn
 
 ## Requirements
 The code has been tested with PyTorch 1.12.1 and Cuda 11.7.
