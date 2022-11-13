@@ -11,8 +11,9 @@ Zhexiong Wan, Yuchao Dai, Yuxin Mao
 
 **Commercial use are not allowed.**
 
-![viz](asserts/viz.png)
+<img src="asserts/viz.png" width="60%" />
 
+If you have any questions, please do not hesitate to raise the issue or contact my email wanzhexiong@nwpu.edu.cn
 
 ## Requirements
 The code has been tested with PyTorch 1.12.1 and Cuda 11.7.
@@ -73,11 +74,10 @@ The simulated events are stored in HDF5 format with name ```******-event.hdf5```
 After completing the simulation, you can run the following command to start the training. 
 
 ```
-python main.py --task train --stage chairs2 --isbi --model DCEIFlow --batch_size 4 --epoch 200 --lr 0.0004 --weight_decay 0.0001 --loss_gamma=0.80 --name DCEIFlow
+CUDA_VISIBLE_DEVICES="0," python main.py --task train --stage chairs2 --isbi --model DCEIFlow --batch_size 4 --epoch 200 --lr 0.0004 --weight_decay 0.0001 --loss_gamma=0.80 --name DCEIFlow
 ```
 
-
-### Bibtex
+### Citation
 If our work or code helps you, please cite our paper. 
 
 **If our code is very useful for your new research, I hope you can also open source your code including training.**
