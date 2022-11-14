@@ -106,11 +106,14 @@ class DCEIFlow(nn.Module):
         """ Estimate optical flow between pair of frames """
 
         image1 = batch['image1']
-        image2 = batch['image2']
         image1 = 2 * (image1 / 255.0) - 1.0
-        image2 = 2 * (image2 / 255.0) - 1.0
         image1 = image1.contiguous()
-        image2 = image2.contiguous()
+
+        image2 = None
+        if self.training:
+            image2 = batch['image2']
+            image2 = 2 * (image2 / 255.0) - 1.0
+            image2 = image2.contiguous()
 
         event_voxel = batch['event_voxel']
         event_voxel = 2 * event_voxel - 1.0
@@ -124,13 +127,19 @@ class DCEIFlow(nn.Module):
         with autocast(enabled=self.args.mixed_precision):
             emap = self.enet(event_voxel)
             if self.isbi and 'reversed_event_voxel' in batch.keys():
+                assert image2 is not None
                 fmap1, fmap2 = self.fnet([image1, image2])
                 reversed_event_voxel = batch['reversed_event_voxel']
                 reversed_event_voxel = 2 * reversed_event_voxel - 1.0
                 reversed_event_voxel = reversed_event_voxel.contiguous()
                 reversed_emap = self.enet(reversed_event_voxel)
             else:
-                fmap1, fmap2 = self.fnet([image1, image2])
+                reversed_emap = None
+                if image2 is None:
+                    fmap1 = self.fnet(image1)
+                    fmap2 = None
+                else:
+                    fmap1, fmap2 = self.fnet([image1, image2])
 
         fmap1 = fmap1.float()
         emap = emap.float()
@@ -179,7 +188,7 @@ class DCEIFlow(nn.Module):
             
             flow_predictions.append(flow_up)
 
-        if reversed_emap is not None:
+        if fmap2 is not None and reversed_emap is not None:
 
             with autocast(enabled=self.args.mixed_precision):
                 # pseudo_fmap1 = fmap2 + r_emap

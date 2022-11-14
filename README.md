@@ -49,7 +49,7 @@ After the environment is configured and the pretrained weights is downloaded, ru
 python main.py --task test --stage mvsec --checkpoint ./checkpoint/DCEIFlow_paper.pth
 ```
 
-The results reported in our paper are simulated with [esim_py](https://github.com/uzh-rpg/rpg_vid2e). We also provide anther pretrained model using a new simulator, [DVS-Voltmeter](https://github.com/Lynn0306/DVS-Voltmeter), thanks for this open source project. It improves the performance on Chairs and Sintel, while MVSEC is basically unchanged. **We recommend using the updated model because of better generalization performance.**
+The results reported in our paper are simulated with [esim_py](https://github.com/uzh-rpg/rpg_vid2e). We also provide another pretrained model using a new simulator, [DVS-Voltmeter](https://github.com/Lynn0306/DVS-Voltmeter), thanks for this open source project. It improves the performance on Chairs and Sintel, while MVSEC is basically unchanged. **We recommend using the updated model because of better generalization performance.**
 
 ```
 python main.py --task test --stage mvsec --checkpoint ./checkpoint/DCEIFlow.pth
