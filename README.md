@@ -9,7 +9,7 @@ Zhexiong Wan, Yuchao Dai, Yuxin Mao
 
 [Project Page](https://npucvr.github.io/DCEIFlow/), [Arxiv](), [IEEE]()
 
-<img src="asserts/viz.png" width="60%" />
+<img src="assets/viz.png" width="60%" />
 
 If you have any questions, please do not hesitate to raise the issue or contact my email wanzhexiong@mail.nwpu.edu.cn
 
