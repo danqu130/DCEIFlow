@@ -22,8 +22,6 @@ class ArgParser:
         self.parse.add_argument('--mixed_precision', action='store_true', default=False)
         self.parse.add_argument("--resume", action='store_true', help="")
         self.parse.add_argument("--checkpoint", type=str, default="", help="")
-        self.parse.add_argument('--weight_fix', type=str, default="", \
-            help='fix some weights for transfer training')
 
         self.parse.add_argument("--model", type=str, default="DCEIFlow", help="")
         self.parse.add_argument('--iters', type=int, default=6, help="iters from low level to higher")
@@ -53,12 +51,9 @@ class ArgParser:
         self.parse.add_argument('--not_save_log', action='store_true', default=False)
         self.parse.add_argument("--log_path", type=str, default="logs", help="")
 
-        self.parse.add_argument('--run_epoch', action='store_true', default=True)
         self.parse.add_argument("--epoch", type=int, default=200, help="")
-        self.parse.add_argument("--step", type=int, default=20000, help="")
-        self.parse.add_argument("--summary_step", type=int, default=1000, help="")
-        self.parse.add_argument("--eval_feq", type=int, default=5, help="every summary_step*eval_feq for step, every eval_feq for epoch")
-        self.parse.add_argument("--save_feq", type=int, default=5, help="every summary_step*save_feq for step, every save_feq for epoch")
+        self.parse.add_argument("--eval_feq", type=int, default=5, help="every eval_feq for epoch")
+        self.parse.add_argument("--save_feq", type=int, default=5, help="every save_feq for epoch")
         self.parse.add_argument("--save_path", type=str, default="logs", help="")
         self.parse.add_argument("--debug", action='store_true', default=False)
 

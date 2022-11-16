@@ -85,16 +85,10 @@ def train(local_rank, args):
     if args.distributed == 'ddp':
         model.cuda(args.gpus[args.local_rank])
         model.train()
-        if args.weight_fix != "":
-            model = torch.nn.parallel.DistributedDataParallel(model, \
-                device_ids=[args.gpus[args.local_rank]], find_unused_parameters=True)
-            _print("Use DistributedDataParallel at gpu {} with find_unused_parameters:True".format( \
-                args.gpus[args.local_rank]))
-        else:
-            model = torch.nn.parallel.DistributedDataParallel(model, \
-                device_ids=[args.gpus[args.local_rank]])
-            _print("Use DistributedDataParallel at gpu {} with find_unused_parameters:False".format( \
-                args.gpus[args.local_rank]))
+        model = torch.nn.parallel.DistributedDataParallel(model, \
+            device_ids=[args.gpus[args.local_rank]])
+        _print("Use DistributedDataParallel at gpu {} with find_unused_parameters:False".format( \
+            args.gpus[args.local_rank]))
     else:
         model = nn.DataParallel(model, device_ids=args.gpus)
         model.cuda(args.gpus[0])
@@ -114,16 +108,11 @@ def train(local_rank, args):
         _print("Use optimizer: {} with init lr:{}, decay:{}, epsilon:{} ".format( \
             "AdamW", args.lr, args.weight_decay, args.epsilon))
 
-    if args.run_epoch:
-        lr_scheduler = optim.lr_scheduler.OneCycleLR(optimizer, args.lr, \
-            steps_per_epoch=len(train_loader), epochs=args.epoch)
-        if args.distributed != 'ddp' or args.local_rank == 0:
-            _print("Use scheduler: {}, with epoch:{}, steps_per_epoch {}".format( \
-                "OneCycleLR", args.epoch, len(train_loader)))
-    else:
-        lr_scheduler = optim.lr_scheduler.OneCycleLR(optimizer, args.lr, total_steps=args.step)
-        if args.distributed != 'ddp' or args.local_rank == 0:
-            _print("Use scheduler: {}, with total steps {}".format("OneCycleLR", args.step))
+    lr_scheduler = optim.lr_scheduler.OneCycleLR(optimizer, args.lr, \
+        steps_per_epoch=len(train_loader), epochs=args.epoch)
+    if args.distributed != 'ddp' or args.local_rank == 0:
+        _print("Use scheduler: {}, with epoch:{}, steps_per_epoch {}".format( \
+            "OneCycleLR", args.epoch, len(train_loader)))
 
     scaler = GradScaler(enabled=args.mixed_precision)
     if args.distributed != 'ddp' or args.local_rank == 0:
@@ -132,66 +121,35 @@ def train(local_rank, args):
     trainer = Trainer(args, model, loss=loss, optimizer=optimizer, \
         lr_scheduler=lr_scheduler, scaler=scaler, logger=logger)
     start = 0
-    if args.checkpoint != '' and args.partial_checkpoint == '':
+    if args.checkpoint != '':
         start = trainer.load(args.checkpoint, only_model=False if args.resume else True)
-    elif args.partial_checkpoint != '' and args.checkpoint == '':
-        trainer.partial_load(args.partial_checkpoint, weight_fix=args.weight_fix)
-    elif args.checkpoint != '' and args.partial_checkpoint != '':
-        # raise NotImplementedError("Can not both using `checkpoint` and `partial_checkpoint`.")
-        assert args.weight_fix == 'checkpoint'
-        start = trainer.load(args.checkpoint, only_model=False if args.resume else True)
-        trainer.partial_load(args.partial_checkpoint, weight_fix=args.weight_fix, not_load=True)
-    else:
-        trainer.weight_fix(args.weight_fix)
 
     if args.distributed != 'ddp' or args.local_rank == 0:
         _print("For model {} with name {}, Parameter Count: {}(trainable)/{}(all), gpus: {}".format( \
             args.model, args.name if args.name != "" else "NoNAME", count_parameters(trainer.model), \
                 count_all_parameters(trainer.model), args.gpus))
         _print("Use small? {}".format(args.small))
-        _print("Use backbone: {}".format(args.backbone))
-        _print("Use correlation: {}".format(args.corr))
-        _print("Use decoder: {}".format(args.decoder))
-        _print("Use fusion: {}".format(args.fusion))
 
     setup_seed(args.seed)
-    if args.run_epoch:
-        for i in range(start+1, args.epoch+1):
-            if args.distributed != 'ddp' or args.local_rank == 0:
-                _print(">>> Start the {}/{} training epoch with save feq {} at stage {}".format( \
-                    i, args.epoch, args.save_feq, args.stage), "training")
-            if train_sampler is not None:
-                train_sampler.set_epoch(i)
-            trainer.run_epoch(train_loader)
-            if args.local_rank == 0 and logger is not None:
-                logger.summary(i)
 
-            if i % args.eval_feq == 0:
-                if args.distributed != 'ddp' or args.local_rank == 0:
-                    _print(">>> Run {} evaluate epoch".format(i), "training")
-                scores = evaluates(args, model, val_sets, val_setnames, metric_fun, logger=logger)
-                if args.local_rank == 0 and logger is not None:
-                    logger.write_dict(i, scores)
-            if args.local_rank == 0 and i % args.save_feq == 0:
-                trainer.store(args.save_path, args.name, i)
-    else:
-        total_steps = start
-
+    for i in range(start+1, args.epoch+1):
         if args.distributed != 'ddp' or args.local_rank == 0:
-            _print(">>> Start the {}/{} training step from {} with sum step {} and save feq {}, stage {}".format( \
-                total_steps, args.step, start, args.summary_step, args.save_feq, args.stage), "training")
+            _print(">>> Start the {}/{} training epoch with save feq {} at stage {}".format( \
+                i, args.epoch, args.save_feq, args.stage), "training")
+        if train_sampler is not None:
+            train_sampler.set_epoch(i)
+        trainer.run_epoch(train_loader)
+        if args.local_rank == 0 and logger is not None:
+            logger.summary(i)
 
-        save_index = 0
-        dataloader_iterator = iter(train_loader)
-        while total_steps < args.step:
-            trainer.run_steps(train_loader, dataloader_iterator, total_steps, step_num=args.summary_step)
-            total_steps += args.summary_step
-            if args.local_rank == 0 and  logger is not None:
-                logger.summary(total_steps)
-
-            save_index += 1
-            if args.local_rank == 0 and save_index % args.save_feq == 0:
-                trainer.store(args.save_path, args.name, total_steps)
+        if i % args.eval_feq == 0:
+            if args.distributed != 'ddp' or args.local_rank == 0:
+                _print(">>> Run {} evaluate epoch".format(i), "training")
+            scores = evaluates(args, model, val_sets, val_setnames, metric_fun, logger=logger)
+            if args.local_rank == 0 and logger is not None:
+                logger.write_dict(i, scores)
+        if args.local_rank == 0 and i % args.save_feq == 0:
+            trainer.store(args.save_path, args.name, i)
 
     if args.local_rank == 0:
         dist.destroy_process_group()
@@ -216,7 +174,7 @@ def test(local_rank, args, logger=None):
         dist.init_process_group(backend='nccl', init_method='tcp://{}:{}'.format(args.ip, args.port), world_size=args.nprocs, rank=local_rank)
         torch.cuda.set_device(args.local_rank)
 
-    assert args.checkpoint != '' or args.partial_checkpoint != '' 
+    assert args.checkpoint != ''
 
     start = time.time()
     test_sets, test_setnames = fetch_test_dataset(args)

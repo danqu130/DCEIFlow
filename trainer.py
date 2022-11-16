@@ -160,51 +160,6 @@ class Trainer:
             torch.save(checkpoint, save_path)
             self.log_info("<<< Save model to {} complete".format(save_path), "trainer")
 
-    def run_steps(self, dataloader, dataloader_iterator, step=0, step_num=200):
-        self.model.train()
-
-        if self.args.local_rank == 0:
-            self.bar = tqdm(total=step_num, position=0, leave=True)
-
-        for _ in range(step, step + step_num):
-            try:
-                batch = next(dataloader_iterator)
-            except StopIteration:
-                dataloader_iterator = iter(dataloader)
-                batch = next(dataloader_iterator)
-
-            for key in batch.keys():
-                if torch.is_tensor(batch[key]):
-                    batch[key] = batch[key].cuda()
-
-            # output = self.model(batch['img1'], batch['img2'], self.args.iters)
-            output = self.model(batch, self.args.iters)
-            loss = self.loss(output, batch)
-
-            torch.distributed.barrier()
-            reduced_loss = reduce_list(loss, self.args.nprocs)
-
-            self.optimizer.zero_grad()
-
-            self.scaler.scale(loss['loss']).backward()
-            self.scaler.unscale_(self.optimizer)
-            nn.utils.clip_grad_norm_(self.model.parameters(), self.args.clip)
-
-            self.scaler.step(self.optimizer)
-            self.lr_scheduler.step()
-            self.scaler.update()
-
-            if self.args.local_rank == 0:
-                self.bar_update(reduced_loss)
-
-            if self.logger is not None:
-                self.logger.push(reduced_loss, 'loss', last=False)
-                self.logger.push({'lr': self.optimizer.state_dict()['param_groups'][0]['lr']})
-
-        if self.args.local_rank == 0:
-            self.bar.close()
-        return dataloader
-
     def run_epoch(self, dataloader):
         self.model.train()
 

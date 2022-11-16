@@ -194,7 +194,7 @@ class FlyingChairs2(dataset.Dataset):
             flow_b_base_fileid = (os.path.basename(
                 flow10_filenames[i])).split("-", 2)[0]
             event_base_fileid = (os.path.basename(
-                event_filenames[i])).split("_", 2)[0]
+                event_filenames[i])).split("-", 2)[0]
 
             assert (im1_base_fileid == im2_base_fileid)
             assert (im1_base_fileid == flow_f_base_fileid)
