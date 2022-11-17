@@ -90,10 +90,6 @@ If our work or code helps you, please cite our paper.
 }
 ```
 
-## TODO
-
-- [ ] Ekubric simlulation script
-
 ## Acknowledgments
 
 This research was sponsored by Zhejiang Lab.
