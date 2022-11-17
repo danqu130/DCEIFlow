@@ -3,11 +3,11 @@ This repository contains the source code for our paper:
 
 Learning Dense and Continuous Optical Flow from an Event Camera 
 
-TIP 2022
+IEEE Transactions on Image Processing (TIP 2022)
 
 Zhexiong Wan, Yuchao Dai, Yuxin Mao
 
-[Project Page](https://npucvr.github.io/DCEIFlow/), [Arxiv](), [IEEE]()
+[Project Page](https://npucvr.github.io/DCEIFlow/), [arXiv](https://arxiv.org/abs/2211.09078), [IEEE](https://ieeexplore.ieee.org/document/9950520), [Supp](https://npucvr.github.io/DCEIFlow/Supp_Final_compressed.pdf).
 
 <img src="assets/viz.png" width="60%" />
 
@@ -75,7 +75,7 @@ After completing the simulation, you can run the following command to start the 
 CUDA_VISIBLE_DEVICES="0," python main.py --task train --stage chairs2 --isbi --model DCEIFlow --batch_size 4 --epoch 200 --lr 0.0004 --weight_decay 0.0001 --loss_gamma=0.80 --name DCEIFlow
 ```
 
-### Citation
+## Citation
 If our work or code helps you, please cite our paper. 
 
 **If our code is very useful for your new research, I hope you can also open source your code including training.**
@@ -90,7 +90,11 @@ If our work or code helps you, please cite our paper.
 }
 ```
 
-### Acknowledgments
+## TODO
+
+- [ ] Ekubric simlulation script
+
+## Acknowledgments
 
 This research was sponsored by Zhejiang Lab.
 
