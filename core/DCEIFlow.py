@@ -110,7 +110,8 @@ class DCEIFlow(nn.Module):
         image1 = image1.contiguous()
 
         image2 = None
-        if self.training:
+        if self.training or self.isbi:
+            assert 'image2' in batch.keys()
             image2 = batch['image2']
             image2 = 2 * (image2 / 255.0) - 1.0
             image2 = image2.contiguous()

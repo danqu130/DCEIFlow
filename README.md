@@ -83,10 +83,12 @@ If our work or code helps you, please cite our paper.
 ```
 @article{wan2022DCEIFlow,
     author={Wan, Zhexiong and Dai, Yuchao and Mao, Yuxin},
-    title={Learning Dense and Continuous Optical Flow from an Event Camera}, 
+    title={Learning Dense and Continuous Optical Flow From an Event Camera}, 
     journal={IEEE Transactions on Image Processing}, 
-    DOI=10.1109/TIP.2022.3220938,
-    year={2022}
+    year={2022},
+    volume={31},
+    pages={7237-7251},
+    doi={10.1109/TIP.2022.3220938}
 }
 ```
 
